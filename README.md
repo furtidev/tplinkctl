@@ -16,7 +16,8 @@ Currently only **TL-WR840N** is supported as it is the only router I have availa
 ## Roadmap
 - TL-WR840N
   - [x] Ability to check connected clients.
-  - [ ] Ability to check current status. (with a bunch of other useful information suhc as uptime, DNS etc. etc.)
+  - [x] Ability to check current status. (with a bunch of other useful information suhc as uptime, DNS etc. etc.)
+    - Only basic functionality has been implemented.
   - [ ] Ability to reboot.
   - More will be coming soon!
 - Write a driver for your router!
