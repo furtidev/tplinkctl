@@ -3,9 +3,75 @@ package wr840n
 import (
 	"bufio"
 	"strings"
+	"strconv"
 )
 
-// DHCP Parser
+/*
+	Status information Parser
+*/
+type StatusInfo struct {
+	FirmwareVer, HardwareVer string
+	Uptime int
+}
+
+type StatusType uint8
+
+const (
+	BasicInfo StatusType = iota
+	NotRecognized
+)
+
+func ParseStatusInfoData(body string) StatusInfo {
+	dat := StatusInfo{}
+
+	scanner := bufio.NewScanner(strings.NewReader(body))
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		lineType := NotRecognized
+
+		if line[0] == '[' {
+			if line == "[0,0,0,0,0,0]2" {
+				lineType = BasicInfo
+			} else {
+				scanner.Scan()
+				continue
+			}
+		}
+		if lineType == BasicInfo {
+			scanner.Scan()			
+			shouldSkip := false
+
+			for !shouldSkip {
+				subLine := scanner.Text()
+				if subLine[0] == '[' {
+					shouldSkip = true
+					continue
+				}
+
+				delim := strings.IndexByte(subLine, '=')
+				switch key := subLine[:delim]; key {
+				case "softwareVersion":
+					dat.FirmwareVer = subLine[delim+1:]
+				case "hardwareVersion":
+					dat.HardwareVer = subLine[delim+1:]
+				case "upTime":
+					up, _ := strconv.Atoi(subLine[delim+1:])
+					dat.Uptime = up
+				}
+				scanner.Scan()
+			}
+			break
+		}
+	}
+
+	return dat
+}
+
+/* 
+	DHCP client list Parser 
+*/
 type DHCPClient struct {
 	LeaseTimeRemaining, MacAddress, HostName, IPAddress string
 }
