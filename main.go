@@ -38,6 +38,11 @@ func main() {
 						Usage: "check connected DHCP clients.",
 						Action: wr840n.Clients,
 					},
+					{
+						Name: "reboot",
+						Usage: "reboot the router.",
+						Action: wr840n.Reboot,
+					},
 				},
 			},
 		},
