@@ -13,6 +13,9 @@ const (
 
 	dhcpClientURL = "http://192.168.0.1/cgi?5"
 	dhcpClientPayload = "[LAN_HOST_ENTRY#0,0,0,0,0,0#0,0,0,0,0,0]0,4\r\nleaseTimeRemaining\r\nMACAddress\r\nhostName\r\nIPAddress\r\n"
+
+	rebootURL = "http://192.168.0.1/cgi?7"
+	rebootPayload = "[ACT_REBOOT#0,0,0,0,0,0#0,0,0,0,0,0]0,0\r\n"
 )
 
 var authToken string
@@ -48,5 +51,20 @@ func Clients(ctx *cli.Context) error {
 	for _, v := range dat {
 		fmt.Printf("- %s\n    - %s\n    - %s\n", v.HostName, v.IPAddress, v.MacAddress)
 	}
+	return nil
+}
+
+func Reboot(ctx *cli.Context) error {
+	body, err := MakeRequest(rebootURL, rebootPayload, authToken)
+	if err != nil {
+		return err
+	}
+
+	if body == "[error]0" {
+		fmt.Println("Success!")
+	} else {
+		fmt.Println("Could not reboot router. An error occurred.")
+	}
+
 	return nil
 }
